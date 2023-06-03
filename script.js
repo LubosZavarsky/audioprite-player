@@ -7,17 +7,23 @@ class Sprite {
     this.init();
   }
 
+  static audioContext = null;
+
   get isPlaying() {
     return this.isPlayingFlag;
   }
 
   async init() {
-    // Set up web audio
-    const AudioCtx = window.AudioContext || window.webkitAudioContext;
-    this.ctx = new AudioCtx();
+    // Set up web audio context, if not set up already
+    if (!Sprite.audioContext) {
+      Sprite.audioContext = new (window.AudioContext ||
+        window.webkitAudioContext)();
+      console.log("Context inited! 🦾");
+    }
+    this.ctx = Sprite.audioContext;
+
     // Fetch source file
     this.audioBuffer = await this.fetchFile();
-    console.log("Inited! 🦾");
   }
 
   async fetchFile() {
@@ -66,7 +72,7 @@ class Sprite {
       console.log(this.remainingTones);
 
       if (this.remainingTones === 0) {
-        console.log("Last ♬");
+        console.log("Last ♬ played");
         this.isPlayingFlag = false;
       }
     };
@@ -108,7 +114,37 @@ class Sprite {
 const audioData = {
   piano: {
     tenuto: new Sprite({
-      src: ["./assets/piano-tenuto.webm", "./assets/piano-tenuto.mp3"],
+      src: ["/assets/piano-tenuto.webm", "s/assets/piano-tenuto.mp3"],
+      sprite: {
+        c4: [0, 2229.115646258503],
+        "c#4": [4000, 2229.1156462585027],
+        d4: [8000, 2229.1156462585027],
+        "d#4": [12000, 2229.1156462585027],
+        e4: [16000, 2229.1156462585027],
+        f4: [20000, 2229.1156462585027],
+        "f#4": [24000, 2229.1156462585027],
+        g4: [28000, 2229.1156462585027],
+        "g#4": [32000, 2229.1156462585063],
+        a4: [36000, 2229.1156462585063],
+        "a#4": [40000, 2229.1156462585063],
+        b4: [44000, 2229.1156462585063],
+        c5: [48000, 2229.1156462585063],
+        "c#5": [52000, 2229.1156462585063],
+        d5: [56000, 2229.1156462585063],
+        "d#5": [60000, 2229.1156462585063],
+        e5: [64000, 2229.1156462585063],
+        f5: [68000, 2229.1156462585063],
+        "f#5": [72000, 2229.1156462585063],
+        g5: [76000, 2229.1156462585063],
+        "g#5": [80000, 2229.1156462585063],
+        a5: [84000, 2229.1156462585063],
+        "a#5": [88000, 2229.1156462585063],
+        b5: [92000, 2229.1156462585063],
+        c6: [96000, 2229.1156462585063],
+      },
+    }),
+    staccato: new Sprite({
+      src: ["/assets/piano-staccato.webm", "/assets/piano-staccato.mp3"],
       sprite: {
         c4: [0, 2229.115646258503],
         "c#4": [4000, 2229.1156462585027],
@@ -151,6 +187,6 @@ document.querySelector("#harmo").addEventListener("click", () => {
 });
 
 document.querySelector("#melo").addEventListener("click", () => {
-  if (audioData.piano.tenuto.isPlaying) return;
-  audioData.piano.tenuto.playTonesSequentially(["c4", "f#4", "d4", "a5"]);
+  if (audioData.piano.staccato.isPlaying) return;
+  audioData.piano.staccato.playTonesSequentially(["c4", "f#4", "d4", "a5"]);
 });
